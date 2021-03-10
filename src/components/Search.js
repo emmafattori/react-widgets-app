@@ -7,6 +7,7 @@ const Search = () => {
 
 
 	useEffect(() => {
+		
 		const search = async () => {
 			const { data } = await axios.get('http://en.wikipedia.org/w/api.php', {
 				params: {
@@ -21,9 +22,20 @@ const Search = () => {
 			setResults(data.query.search);
 		}
 
-		
+		if(term && !results.length){
+			search()
+		} else {
+			const timeoutID = setTimeout(() => {
+			if (term) {
+				search()
+			}
+			}, 1000);
 
-		search();
+			return () => {
+				clearTimeout(timeoutID);
+			};
+		}
+
 	}, [term]);
 
 	const renderedResults = results.map((result) => {
